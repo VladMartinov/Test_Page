@@ -1,0 +1,103 @@
+#include <iostream>             //Для вывода информации на консоль
+#include <iomanip>              //Для редактирование выводимого поля
+
+using namespace std;
+
+//Метод принимающий одномерный массив и его длинну
+double* makeArray1D(double** Array2D, const unsigned int LENGTH, unsigned int ROWS, unsigned int COLS)
+{
+    double* Array1D = new double[LENGTH];
+    for (unsigned int i = ROWS, k=0; i > 0; --i)         // Пробегаемся по строками массива 2Д
+    {
+
+        for (unsigned int j = 0; j < COLS; ++j)     // Пробегаемя по столбцам массива 2Д
+            *(Array1D + (j+(k*ROWS))) = *(*(Array2D + i)+j);          //заполням элементы массива 2Д  
+
+        k++;
+    }
+
+    return Array1D;
+    
+}
+
+//Метод принимающий одномерный массив, кол-во строк и столбцов (для инициализации двухмерного массива)
+double** initializeArray2D(unsigned int ROWS, unsigned int COLS)
+{
+
+    double** Array2D = new double* [ROWS];          // Выделение памяти для двух мерногомассива 
+    for (unsigned int i = 0; i < ROWS; ++i)
+    {
+        *(Array2D + i) = new double[COLS];          // Выделение памяти для каждой строки двухмерного массива
+    }
+
+    for (unsigned int i = 0; i < ROWS; ++i)         // Пробегаемся по строками массива 2Д
+    {
+
+        for (unsigned int j = 0; j < COLS; ++j)     // Пробегаемя по столбцам массива 2Д
+        {
+            *(*(Array2D + i) + j) = sin(i-j) + cos(i+j);          //заполням элементы массива 2Д  
+        }
+    }
+    return Array2D;                                 //Возврат двухмерного массива
+}
+
+//Метод принимающий одномерный массив и его длинну для вывода его на консоль
+void printArray1D(double Array1D[], unsigned LENGTH) {
+    cout << "\n[ ";
+    for (unsigned int i = 0; i < LENGTH; ++i)
+    {
+        cout << *(Array1D + i) << "  ";                                 //Вывод каждого элемента массива
+    }
+    cout << "]\n";                                                        //Переход на следующую строку
+}
+
+//Метод принимающий двухмерный массив, его кол-во строк и длинну
+void printArray2D(double** Array2D, int ROWS, int COLS) {
+    for (unsigned int i = 0; i < ROWS; ++i)                             //Пробегаемя по строкам
+    {
+        cout << "\n";                                                   //Переход на следующую строку
+        for (unsigned int j = 0; j < COLS; ++j)
+        {
+            if (i == 0 && j == 0)
+                cout << "[" << setfill(' ') << setw(4) << *(*(Array2D + i) + j); //Вывод первого эоемента первой строки (из-за квадратной скобки)
+            else
+                cout << setfill(' ') << setw(5) << *(*(Array2D + i) + j);      //Вывод всех эл-ов массива
+        }
+    }
+    cout << "  ]\n";                                                    //Завершающая скобка
+    cout << "\n" << "=>\n";                                             //Разделение одномерого и двухмерного массива в консоли
+}
+
+//Метод принимает одномерный массив для его удаления из памяти
+void freeArray1D(double* Array1D) {
+    delete Array1D;                             //Удаление из памяти массива
+    Array1D = NULL;                             //Присвоение нулевой ссылки (то есть ничего)
+}
+
+//Метод принимающий двухмерный массив для его удаления из памяти
+void freeArray2D(double** Array2D, int ROWS) {
+    for (int i = 0; i < ROWS; ++i)
+    {
+        delete[] * (Array2D + i);                            //Удаление каждой строки двухмерного массива
+    }
+    delete[] Array2D;                                       //Удаление массива 
+}
+
+int main()
+{
+    const unsigned int Length = 15;         //Инициализация длинны одномерного массива
+    const unsigned int ROWS = 5;            //Инициализация кол-ва строк
+    const unsigned int COLS = 3;            //Инициализация кол-ва столбцов
+    cout<<"ALLO";
+    double** Array2D = initializeArray2D(ROWS, COLS);    //Вызов метода возвращающего двухмерный массив
+
+    double* Array1D = makeArray1D(Array2D, Length, ROWS, COLS);     //Вызов метода для его заполнения
+
+    printArray2D(Array2D, ROWS, COLS);      //Вывод двухмерного массива на консоль
+
+    printArray1D(Array1D, Length);          //Вывод одномерного массива на консоль
+
+    freeArray1D(Array1D);                   //Удаление из памяти одномерного массива
+    freeArray2D(Array2D, ROWS);             //Удаление из памяти двухмерного массива
+    return 0;                               //Конец
+}
